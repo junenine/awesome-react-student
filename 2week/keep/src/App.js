@@ -11,6 +11,10 @@ class App extends Component {
 
   save = (content) => {
     //설계한 함수의 상태를 확인하기 위해 save를 표시하도록 해봅시다.
+    const {savedNotes} = this.state
+    this.setState({
+      savedNotes : [...savedNotes, {content : content}]
+    })
     console.log(content + "is saved")
   }
 
@@ -18,8 +22,11 @@ class App extends Component {
     return (
       <div className='App'>
         <Writing save={this.save} />
-        {/* 원래 노트를 여러개 보내므로, Notes라고 하는게 좋겠지만 추후에 Note 컴포넌트로 활용할 예정이기 때문에 Note로 명명해 줍시다.*/}
-        <Note content={this.state.savedNotes[0].content} />
+        {this.state.savedNotes.map((note) => (
+        <div>
+          <Note content={note.content} />
+        </div>
+        ))}
       </div>
     )
   }
@@ -29,17 +36,34 @@ class Writing extends Component {
   constructor(props) {
     super(props)
     this.state = {
-      content: ""
+      content: "기본값을 입력해 주세요"
     }
   }
 
   handleChange = (e) => {
+    const event = {...e}
+    console.log(event)
+    this.setState({
+      content: e.target.value
+    })
     console.log("changed")
   }
 
   handleSubmit = (e) => {
-    this.props.save("content")
+    this.props.save(this.state.content)
+    e.preventDefault()
   }
+
+componentDidMount() {
+  setTimeout(()=> {
+    this.setState({
+      content:''
+    })
+    },3000)
+  }
+
+
+
 
   render() {
     return (
